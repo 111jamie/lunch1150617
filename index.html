@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>自我介紹</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(135deg, #f5f7ff, #e3f2fd);
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .hero {
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      color: white;
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+
+    .info-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .info-list li {
+      margin-bottom: 8px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skills span {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 600px) {
+      .hero {
+        padding: 40px 20px;
+      }
+
+      .content {
+        padding: 25px 20px;
+      }
+
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>你好，我是王曉明</h1>
+      <p>歡迎來到我的自我介紹網站</p>
+    </div>
+
+    <div class="content">
+      <section>
+        <h2>關於我</h2>
+        <p>我是一位熱愛學習與探索新事物的人，喜歡透過程式和設計解決問題，也很享受與人交流的過程。</p>
+      </section>
+
+      <section>
+        <h2>基本資料</h2>
+        <ul class="info-list">
+          <li>⭐ 年齡：20歲</li>
+          <li>📍 地區：台灣</li>
+          <li>💼 興趣：程式設計、音樂、閱讀</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>專長技能</h2>
+        <div class="skills">
+          <span>HTML</span>
+          <span>CSS</span>
+          <span>JavaScript</span>
+          <span>網頁設計</span>
+          <span>問題解決</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>我的目標</h2>
+        <p>希望能持續精進自己的技能，並用所學創造出有價值的作品。</p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
