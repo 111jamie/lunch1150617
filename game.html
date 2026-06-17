@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>網頁設計小遊戲</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-page {
+      width: min(980px, 95%);
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+    }
+
+    .top-bar {
+      background: linear-gradient(90deg, #4f46e5, #0ea5e9);
+      color: white;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .top-bar a {
+      color: white;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .game-panel {
+      padding: 26px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stats div {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .start-btn,
+    .next-btn {
+      background: linear-gradient(90deg, #8b5cf6, #2563eb);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.2s ease;
+    }
+
+    .start-btn:hover,
+    .next-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .next-btn {
+      display: none;
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .play-area {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background:
+        radial-gradient(circle at top, #f8fbff 0%, #eef7ff 45%, #dbeafe 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #bfdbfe;
+      cursor: crosshair;
+    }
+
+    .rule-text {
+      margin-bottom: 12px;
+      color: #4b5563;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .play-area::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+        radial-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+      background-size: 18px 18px, 28px 28px;
+      background-position: 0 0, 10px 10px;
+      pointer-events: none;
+    }
+
+    .target {
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      user-select: none;
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: manipulation;
+      z-index: 2;
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.3);
+      animation: bounce 1.8s ease-in-out infinite;
+      transition: transform 0.1s ease;
+      border: 3px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .target:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    #message {
+      margin-top: 12px;
+      min-height: 24px;
+      font-weight: 700;
+      color: #1d4ed8;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .game-panel {
+        padding: 18px;
+      }
+
+      .play-area {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-page">
+    <div class="top-bar">
+      <h2>⭐ 星星捕捉大挑戰</h2>
+      <a href="index.html">返回主頁</a>
+    </div>
+
+    <div class="game-panel">
+      <div class="stats">
+        <div id="levelDisplay">關卡：1 / 2</div>
+        <div id="score">分數：0</div>
+        <div id="time">時間：15</div>
+        <div class="control-group">
+          <button class="start-btn" onclick="startGame()">開始遊戲</button>
+          <button class="next-btn" id="nextBtn" onclick="startNextLevel()">下一關</button>
+        </div>
+      </div>
+      <p class="rule-text">第一關通關條件：至少 5 分</p>
+      <div class="play-area" id="playArea">
+        <div class="target" id="target" style="display:none;">⭐</div>
+      </div>
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <script>
+    const playArea = document.getElementById('playArea');
+    const target = document.getElementById('target');
+    const scoreEl = document.getElementById('score');
+    const timeEl = document.getElementById('time');
+    const levelDisplay = document.getElementById('levelDisplay');
+    const messageEl = document.getElementById('message');
+    const nextBtn = document.getElementById('nextBtn');
+
+    target.addEventListener('pointerdown', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      addScore();
+    });
+
+    let score = 0;
+    let timeLeft = 15;
+    let timer;
+    let moveTimer;
+    let currentLevel = 1;
+    let targetSize = 78;
+    let moveSpeed = 700;
+
+    function randomPosition() {
+      const maxX = playArea.clientWidth - targetSize;
+      const maxY = playArea.clientHeight - targetSize;
+      return {
+        x: Math.random() * maxX,
+        y: Math.random() * maxY
+      };
+    }
+
+    function randomColor() {
+      const colors = ['#f97316', '#ef4444', '#8b5cf6', '#10b981', '#ec4899', '#06b6d4'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function moveTarget() {
+      const pos = randomPosition();
+      target.style.left = `${pos.x}px`;
+      target.style.top = `${pos.y}px`;
+      target.style.background = `linear-gradient(135deg, ${randomColor()}, ${randomColor()})`;
+      target.style.width = `${targetSize}px`;
+      target.style.height = `${targetSize}px`;
+      if (currentLevel === 1) {
+        target.textContent = '⭐';
+        target.style.fontSize = '2rem';
+      } else {
+        target.textContent = '💎';
+        target.style.fontSize = '1.8rem';
+      }
+      target.style.display = 'flex';
+    }
+
+    function addScore() {
+      score += 1;
+      scoreEl.textContent = `分數：${score}`;
+      messageEl.textContent = currentLevel === 1
+        ? '第一關：你抓對了，繼續加油！'
+        : '第二關：太厲害了！';
+      moveTarget();
+    }
+
+    function updateTimer() {
+      timeLeft -= 1;
+      timeEl.textContent = `時間：${timeLeft}`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        clearInterval(moveTimer);
+        target.style.display = 'none';
+        if (currentLevel === 1) {
+          if (score >= 5) {
+            messageEl.textContent = `第一關完成！你獲得 ${score} 分，準備挑戰第二關！`;
+            nextBtn.style.display = 'inline-block';
+          } else {
+            messageEl.textContent = `第一關失敗了！你只拿到 ${score} 分，至少要 5 分才能過關。`;
+            nextBtn.style.display = 'none';
+          }
+        } else {
+          messageEl.textContent = `第二關結束！你的最終分數是 ${score} 分。`;
+          nextBtn.style.display = 'none';
+        }
+      }
+    }
+
+    function startGame() {
+      currentLevel = 1;
+      score = 0;
+      timeLeft = 20;
+      targetSize = 82;
+      moveSpeed = 650;
+      scoreEl.textContent = '分數：0';
+      timeEl.textContent = `時間：${timeLeft}`;
+      levelDisplay.textContent = '關卡：1 / 2';
+      messageEl.textContent = '第一關：快點點擊星星！';
+      nextBtn.style.display = 'none';
+      target.style.display = 'none';
+      clearInterval(timer);
+      clearInterval(moveTimer);
+
+      moveTarget();
+      timer = setInterval(updateTimer, 1000);
+      moveTimer = setInterval(moveTarget, moveSpeed);
+    }
+
+    function startNextLevel() {
+      currentLevel = 2;
+      score = 0;
+      timeLeft = 18;
+      targetSize = 68;
+      moveSpeed = 500;
+      scoreEl.textContent = '分數：0';
+      timeEl.textContent = `時間：${timeLeft}`;
+      levelDisplay.textContent = '關卡：2 / 2';
+      messageEl.textContent = '第二關：速度更快，挑戰你的反應力！';
+      nextBtn.style.display = 'none';
+      target.style.display = 'none';
+      clearInterval(timer);
+      clearInterval(moveTimer);
+
+      moveTarget();
+      timer = setInterval(updateTimer, 1000);
+      moveTimer = setInterval(moveTarget, moveSpeed);
+    }
+  </script>
+</body>
+</html>
